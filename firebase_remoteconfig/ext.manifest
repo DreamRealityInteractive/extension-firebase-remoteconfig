@@ -33,3 +33,7 @@ platforms:
         flags:      ["-stdlib=libc++", "-std=c++11"]
         linkFlags:  ["-ObjC"]
         libs:       ["c++", "z", "sqlite3"]
+
+  x86_64-osx:
+    context:
+        flags:      ["-stdlib=libc++", "-std=c++11"]

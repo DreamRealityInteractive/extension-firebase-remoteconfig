@@ -3,7 +3,7 @@
 #include <dmsdk/dlib/log.h>
 #include <dmsdk/sdk.h>
 
-#if defined(DM_PLATFORM_ANDROID) || defined(DM_PLATFORM_IOS)
+#if defined(DM_PLATFORM_ANDROID) || defined(DM_PLATFORM_IOS) || defined(DM_PLATFORM_OSX)
 
 #include "luautils.h"
 #include "firebase/app.h"
@@ -270,9 +270,7 @@ static int FirebaseRemoteConfig_SetDefaults(lua_State* L) {
 				defaultConfig.push_back({ key, lua_tonumber(L, -2) });
 			break;
 			default:  /* other values */
-				char msg[256];
-				snprintf(msg, sizeof(msg), "Wrong type for table attribute '%s' , type: '%s'", key, luaL_typename(L, -2));
-				luaL_error(L, msg);
+                luaL_error(L, "Wrong type for table attribute '%s' , type: '%s'", key, luaL_typename(L, -2));
 				lua_pop(L, 3); // pop key, value and table copy
 				return 0;
 			break;
@@ -372,7 +370,7 @@ dmExtension::Result AppInitializeFirebaseRemoteConfigExtension(dmExtension::AppP
 }
 
 dmExtension::Result InitializeFirebaseRemoteConfigExtension(dmExtension::Params* params) {
-	#if !defined(DM_PLATFORM_ANDROID) && !defined(DM_PLATFORM_IOS)
+	#if !defined(DM_PLATFORM_ANDROID) && !defined(DM_PLATFORM_IOS) && !defined(DM_PLATFORM_OSX)
 	dmLogInfo("Extension %s is not supported", LIB_NAME);
 	#else
 	g_FirebaseRemoteConfigEventsMutex = dmMutex::New();
@@ -386,7 +384,7 @@ dmExtension::Result AppFinalizeFirebaseRemoteConfigExtension(dmExtension::AppPar
 }
 
 dmExtension::Result FinalizeFirebaseRemoteConfigExtension(dmExtension::Params* params) {
-	#if defined(DM_PLATFORM_ANDROID) || defined(DM_PLATFORM_IOS)
+	#if defined(DM_PLATFORM_ANDROID) || defined(DM_PLATFORM_IOS) || defined(DM_PLATFORM_OSX)
 	if (g_FirebaseRemoteConfigCallback)
 	{
 		dmScript::DestroyCallback(g_FirebaseRemoteConfigCallback);
@@ -402,7 +400,7 @@ dmExtension::Result FinalizeFirebaseRemoteConfigExtension(dmExtension::Params* p
 }
 
 dmExtension::Result UpdateFirebaseRemoteConfigExtension(dmExtension::Params* params) {
-	#if defined(DM_PLATFORM_ANDROID) || defined(DM_PLATFORM_IOS)
+	#if defined(DM_PLATFORM_ANDROID) || defined(DM_PLATFORM_IOS) || defined(DM_PLATFORM_OSX)
 	FirebaseRemoteConfig_ProcessEvents();
 	#endif
 	return dmExtension::RESULT_OK;
